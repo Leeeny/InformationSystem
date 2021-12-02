@@ -6,9 +6,9 @@ public class Style {
         this.nameOfStyle = nameOfStyle;
            }
 
-    @Override
-    public String toString() {
-        return "["nameOfStyle+ "]";
-    }
-
+public String getNameOfStyle() {
+    return nameOfStyle;
+}
+public void setNameOfStyle(String nameOfStyle) {
+    this.nameOfStyle = nameOfStyle;
 }
