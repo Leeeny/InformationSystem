@@ -8,7 +8,8 @@ package Model;
         private String playlistName;
 
         public Playlist() {
-            tracks = new Track[10];
+            ArrayList<Track> tracks = new ArrayList<Track>();
+            tracks.add(track);
             count = 0;
         }
 
