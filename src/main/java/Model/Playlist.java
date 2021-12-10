@@ -1,66 +1,65 @@
 package Model;
 
 
-    public class Playlist {
+import java.util.ArrayList;
 
-        private Track[] tracks;
-        private int count;
-        private String playlistName;
+public class Playlist {
 
-        public Playlist() {
-            tracks = new Track[10];
-            count = 0;
-        }
+    private ArrayList<Track> tracks;
+    private String playlistName;
 
-        public String getPlaylistName() {
-            return playlistName;
-        }
+    public Playlist(ArrayList<Track> tracks, String playlistName) {
+        this.tracks = tracks;
+        this.playlistName = playlistName;
+    }
 
-        public void setPlayListName() {
-            this.playlistName = playlistName;
-        }
+    public String getPlaylistName() {
+        return playlistName;
+    }
 
-        public void add(Track a) {
-            if (count == tracks.length) {
-                System.out.println("ERROR: Collection is full. Songs were not added to the Playlist.");
-            }
-            tracks[count] = a;
-            count++;
-        }
+    public void setPlaylistName(String playlistName) {
+        this.playlistName = playlistName;
+    }
 
-        public Track get(int i) {
-            if (count > i) {
-                return tracks[i];
+    public ArrayList<Track> getTracks() {
+        return tracks;
+    }
+
+    public void setTracks(ArrayList<Track> tracks){
+        this.tracks = tracks;
+    }
+
+    public void addTrack(Track a) {
+        tracks.add(a);
+    }
+
+    public Track getTrack(int index) {
+        return tracks.get(index);
+    }
+
+    public void remove(String nameOfTrack) {
+        boolean found = false;
+        int indexToRemove = 0;
+        while (indexToRemove < tracks.size() && !found) {
+            if (tracks.get(indexToRemove).getNameOfTrack().equals(nameOfTrack)) {
+                found = true;
             } else {
-                return null;
+                indexToRemove++;
             }
         }
-
-        public Track remove(String nameOfTrack) {
-            boolean found = false;
-            int indexToRemove = 0;
-            while (indexToRemove < count && !found) {
-                if (tracks[indexToRemove].getNameOfTrack().equals(nameOfTrack)) {
-                    found = true;
-                } else {
-                    indexToRemove++;
-                }
+        if (indexToRemove < tracks.size()) {
+            for (int from = indexToRemove + 1; from < tracks.size(); from++) {
+                tracks.set(from - 1, tracks.get(from));
             }
-            if (indexToRemove < count) {
-                for (int from = indexToRemove + 1; from < count; from++) {
-                    tracks[from - 1] = tracks[from];
-                }
-                tracks[count - 1] = null;
-                count--;
-            }
-            return null; //?
-        }
-
-                      
-        public void clear() {
-            for (int i = 0; i < tracks.length; i++) {
-                tracks[i] = null;
-                count = 0;
-            }
+            /*tracks[count - 1] = null;
+            count--;*/
         }
     }
+
+
+    public void clear() {
+        for (int i = 0; i < tracks.size(); i++) {
+           tracks.clear(); //оно так работает??
+        }
+    }
+}
