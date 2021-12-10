@@ -5,11 +5,11 @@ public class Driver {
     public static void main(String[] args) {
         Playlist one = new Playlist();
 
-        Track track1 = new Song("name1", "artist1", "album1", 300, "style1");
-        Track track2 = new Song("name2", "artist2", "album2", 310, "style2");
-        Track track3 = new Song("name3", "artist3", "album3", 320, "style3");
-        Track track4 = new Song("name4", "artist4", "album4", 330, "style4");
-        Track track5 = new Song("name5", "artist5", "album5", 340, "style5");
+        Track track1 = new Track("name1", "artist1", "album1", 300, "style1");
+        Track track2 = new Track("name2", "artist2", "album2", 310, "style2");
+        Track track3 = new Track("name3", "artist3", "album3", 320, "style3");
+        Track track4 = new Track("name4", "artist4", "album4", 330, "style4");
+        Track track5 = new Track("name5", "artist5", "album5", 340, "style5");
         
 
         one.add(track1);
