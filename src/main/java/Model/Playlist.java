@@ -2,15 +2,18 @@ package Model;
 
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class Playlist {
 
-    private ArrayList<Track> tracks;
+    private final UUID playlistId;
+    private ArrayList<UUID> idList;
     private String playlistName;
 
-    public Playlist(ArrayList<Track> tracks, String playlistName) {
-        this.tracks = tracks;
+    public Playlist(ArrayList<UUID> idList, String playlistName) {
+        this.idList = idList;
         this.playlistName = playlistName;
+        playlistId = UUID.randomUUID();
     }
 
     public String getPlaylistName() {
@@ -21,45 +24,47 @@ public class Playlist {
         this.playlistName = playlistName;
     }
 
-    public ArrayList<Track> getTracks() {
-        return tracks;
+    public ArrayList<UUID> getIdList() {
+        return idList;
     }
 
-    public void setTracks(ArrayList<Track> tracks){
-        this.tracks = tracks;
+    public UUID getUUID(int index){
+        return idList.get(index);
+    }
+
+    public void setIdList(ArrayList<UUID> idList) {
+        this.idList = idList;
+    }
+
+    public void addTrack(UUID a) {
+        idList.add(a);
     }
 
     public void addTrack(Track a) {
-        tracks.add(a);
+        idList.add(a.getTrackId());
     }
 
-    public Track getTrack(int index) {
-        return tracks.get(index);
+    public UUID getTrackId(int index) {
+        return idList.get(index);
     }
 
-    public void remove(String nameOfTrack) {
-        boolean found = false;
-        int indexToRemove = 0;
-        while (indexToRemove < tracks.size() && !found) {
-            if (tracks.get(indexToRemove).getNameOfTrack().equals(nameOfTrack)) {
-                found = true;
-            } else {
-                indexToRemove++;
-            }
-        }
-        if (indexToRemove < tracks.size()) {
-            for (int from = indexToRemove + 1; from < tracks.size(); from++) {
-                tracks.set(from - 1, tracks.get(from));
-            }
-            /*tracks[count - 1] = null;
-            count--;*/
-        }
+    public void remove(UUID id) {
+        idList.remove(id);
     }
 
+    public void remove(int index) {
+        idList.remove(index);
+    }
+
+    public UUID getPlaylistId() {
+        return this.playlistId;
+    }
 
     public void clear() {
-        for (int i = 0; i < tracks.size(); i++) {
-           tracks.clear(); //оно так работает??
-        }
+        idList.clear();
+    }
+
+    public int size(){
+        return idList.size();
     }
 }

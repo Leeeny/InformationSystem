@@ -1,11 +1,14 @@
 package Model;
 
+import java.util.UUID;
+
 public class Track {
     private String nameOfTrack;
     private String artist;
     private String album;
     private Long time; //max = 600
     private Style nameOfStyle;
+    private final UUID trackId;
 
     public Track(String nameOfTrack, String artist, String album, Long time, Style nameOfStyle) {
         this.nameOfTrack = nameOfTrack;
@@ -13,6 +16,7 @@ public class Track {
         this.album = album;
         this.time = time;
         this.nameOfStyle = nameOfStyle;
+        trackId = UUID.randomUUID();
     }
 
     public Style getStyle() {
@@ -63,11 +67,15 @@ public class Track {
         this.nameOfStyle = nameOfStyle;
     }
 
-    //не уверена, что надо
+    public UUID getTrackId() {
+        return trackId;
+    }
+
     @Override
     public String toString() {
         return "Model.Track [nameOfTrack=" + nameOfTrack + ", artist=" + artist + ", album=" + album
                 + ", time=" + time
                 + ", nameOfStyle" + nameOfStyle + "]";
+        //trackId
     }
 }

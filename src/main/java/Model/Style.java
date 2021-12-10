@@ -15,7 +15,6 @@ public class Style {
         this.nameOfStyle = nameOfStyle;
     }
 
-    //не уверена, что это надо
     @Override
     public String toString() {
         return "[" + nameOfStyle + "]";
