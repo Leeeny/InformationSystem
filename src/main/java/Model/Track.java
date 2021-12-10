@@ -1,13 +1,19 @@
 package Model;
 
-import Model.Style;
-
 public class Track {
     private String nameOfTrack;
     private String artist;
     private String album;
     private Long time; //max = 600
     private Style nameOfStyle;
+
+    public Track(String nameOfTrack, String artist, String album, Long time, Style nameOfStyle) {
+        this.nameOfTrack = nameOfTrack;
+        this.artist = artist;
+        this.album = album;
+        this.time = time;
+        this.nameOfStyle = nameOfStyle;
+    }
 
     public Style getStyle() {
         return nameOfStyle;
@@ -57,14 +63,7 @@ public class Track {
         this.nameOfStyle = nameOfStyle;
     }
 
-    public Track(String nameOfTrack, String artist, String album, Long time) {
-        this.nameOfTrack = nameOfTrack;
-        this.artist = artist;
-        this.album = album;
-        this.time = time;
-
-    }
-
+    //не уверена, что надо
     @Override
     public String toString() {
         return "Model.Track [nameOfTrack=" + nameOfTrack + ", artist=" + artist + ", album=" + album
