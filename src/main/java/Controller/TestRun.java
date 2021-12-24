@@ -26,10 +26,15 @@ public class TestRun {
 
         Playlist playlist = new Playlist(tracksID, "Очень веселый плейлист");
 
-      /*  System.out.println(rockTrack1.toString() + "\nID: " + rockTrack1.getTrackId());
+        HashMap<UUID, Track> tracksIdAndNames = new HashMap<>();
+        tracksIdAndNames.put(rockTrack1.getTrackId(), rockTrack1);
+        tracksIdAndNames.put(popTrack.getTrackId(), popTrack);
+        tracksIdAndNames.put(rapTrack.getTrackId(), rapTrack);
+
+        System.out.println(rockTrack1.toString() + "\nID: " + rockTrack1.getTrackId());
         System.out.println(popTrack.toString() + "\nID: " + popTrack.getTrackId());
         System.out.println(rapTrack.toString() + "\nID: " + rapTrack.getTrackId());
-*/
+
         System.out.println(playlist.getPlaylistId() + " " + playlist.getPlaylistName());
 
         for (int i = 0; i < playlist.size(); i++) {
@@ -40,16 +45,17 @@ public class TestRun {
         System.out.println(FileController.TrackToJSON(rockTrack1));
 
 
-        /*String styleStr = FileController.StyleToJSON(style).toString();
-        String trackStr = FileController.TrackToJSON(track).toString();
+        String styleStr = FileController.StyleToJSON(rock).toString();
+        String trackStr = FileController.TrackToJSON(rockTrack1).toString();
 
-        FileController.StyleToFile(style, "style.json");
-        FileController.TrackToFile(track, "track.json");
+        FileController.StyleToFile(pop, "style.json");
+        FileController.TrackToFile(popTrack, "track.json");
         Style style1 = FileController.styleFromFile("style.json");
         Track track1 = FileController.trackFromFile("track.json");
-        System.out.println(trackStr);*/
+
+        System.out.println(trackStr);
 
         //to do: toString всего что в модели
-        //System.out.println(track.getTrackId());
+        System.out.println(rockTrack1.getTrackId());
     }
 }
