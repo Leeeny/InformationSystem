@@ -1,6 +1,8 @@
 package Model;
 
-public class Style {
+import java.io.Serializable;
+
+public class Style implements Serializable {
     private String nameOfStyle;
 
     public Style(String nameOfStyle) {

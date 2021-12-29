@@ -1,9 +1,14 @@
-package Controller;
+package View;
 
+import Controller.FileController;
 import Model.Playlist;
 import Model.Style;
 import Model.Track;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -55,7 +60,11 @@ public class TestRun {
 
         System.out.println(trackStr);
 
-        //to do: toString всего что в модели
         System.out.println(rockTrack1.getTrackId());
+
+        FileController.saveObjToFile(rapTrack, "saveTrack.txt");
+        Track getTrack = FileController.getTrackFromFile("saveTrack.txt");
+        System.out.println("Deserialized track: ");
+        System.out.println(FileController.TrackToJSON(getTrack));
     }
 }

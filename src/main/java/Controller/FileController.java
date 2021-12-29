@@ -6,13 +6,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class FileController {
 
-    static JSONObject TrackToJSON(Track track) {
+    public static JSONObject TrackToJSON(Track track) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("track_name", track.getNameOfTrack()); //putString ?
         jsonObject.put("artist", track.getArtist());
@@ -22,13 +20,13 @@ public class FileController {
         return jsonObject;
     }
 
-    static JSONObject StyleToJSON(Style style) {
+    public static JSONObject StyleToJSON(Style style) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("style_name", style.getNameOfStyle());
         return jsonObject;
     }
 
-    static void TrackToFile(Track track, String filename) {
+    public static void TrackToFile(Track track, String filename) {
         JSONObject jsonObject = TrackToJSON(track);
         try (FileWriter fileWriter = new FileWriter(filename)) {
             fileWriter.write(jsonObject.toJSONString());
@@ -38,7 +36,7 @@ public class FileController {
         }
     }
 
-    static void StyleToFile(Style style, String filename) {
+    public static void StyleToFile(Style style, String filename) {
         JSONObject jsonObject = StyleToJSON(style);
         try (FileWriter fileWriter = new FileWriter(filename)) {
             fileWriter.write(jsonObject.toJSONString());
@@ -76,5 +74,30 @@ public class FileController {
         return new Style(styleName);
     }
 
+    public static <T> void saveObjToFile(T toSave, String filename) {
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(filename);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(toSave);
+            System.out.println("Object saved!");
+            objectOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static <T> T getTrackFromFile(String filename) {
+        T obj = null;
+        try {
+            FileInputStream fileInputStream = new FileInputStream(filename);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            obj = (T) objectInputStream.readObject();
+            System.out.println("Object read!");
+            objectInputStream.close();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return obj;
+    }
 
 }

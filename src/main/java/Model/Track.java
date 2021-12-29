@@ -1,8 +1,9 @@
 package Model;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-public class Track {
+public class Track implements Serializable {
     private String nameOfTrack;
     private String artist;
     private String album;

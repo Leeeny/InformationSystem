@@ -1,10 +1,11 @@
 package Model;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class Playlist {
+public class Playlist implements Serializable {
 
     private final UUID playlistId;
     private ArrayList<UUID> idList;
