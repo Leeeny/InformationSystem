@@ -29,7 +29,7 @@ public class Playlist implements Serializable {
         return idList;
     }
 
-    public UUID getUUID(int index){
+    public UUID getUUID(int index) {
         return idList.get(index);
     }
 
@@ -65,7 +65,16 @@ public class Playlist implements Serializable {
         idList.clear();
     }
 
-    public int size(){
+    public int size() {
         return idList.size();
+    }
+
+    @Override
+    public String toString() {
+        return "Playlist{" +
+                "playlistId=" + playlistId +
+                ", tracks=" + idList +
+                ", playlistName='" + playlistName + '\'' +
+                '}';
     }
 }

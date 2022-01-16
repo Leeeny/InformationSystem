@@ -4,13 +4,68 @@ import Controller.FileController;
 import Model.Playlist;
 import Model.Style;
 import Model.Track;
-import java.util.Scanner;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
+
 
 public class TestRun {
+
+    public static Track getTrackFromConsole() {
+        Scanner in = new Scanner(System.in);
+        System.out.print("Input nameOfTrack: ");
+        String nameOfTrack = in.nextLine();
+        System.out.print("Input artist: ");
+        String artist = in.nextLine();
+        System.out.print("Input album: ");
+        String album = in.nextLine();
+        System.out.print("Input time: ");
+        String s_time = in.nextLine();
+        long time = 0;
+        try {
+            time = Long.parseLong(s_time);
+        } catch (NumberFormatException e) {
+            System.out.println("Error of number inputting");
+            e.printStackTrace();
+        }
+        System.out.print("Input nameOfStyle: ");
+        String nameOfStyle = in.nextLine();
+        System.out.printf("nameOfTrack: %s  artist: %s  album: %s time: %s nameOfStyle: %s \n", nameOfTrack, artist, album, time, nameOfTrack);
+        return new Track(nameOfTrack, artist, album, time, new Style(nameOfStyle));
+    }
+
+    public static int getUserChoice(Track track){
+        System.out.println(track.toString());
+        System.out.println("Do you want to change(1), delete(2) or add new track(3)?");
+        Scanner in = new Scanner(System.in);
+        String choose = null;
+        do {
+            choose = in.nextLine();
+        } while (!Objects.equals(choose, "1") && !Objects.equals(choose, "2") && !Objects.equals(choose, "3"));
+        System.out.println("Your choose " + choose);
+        return Integer.parseInt(choose);
+    }
+
+    public static void menu(Track track, Playlist playlist) {
+        int choose = getUserChoice(track);
+        switch (choose){
+            case 1: {
+                playlist.remove(track.getTrackId());
+                track = getTrackFromConsole();
+                playlist.addTrack(track.getTrackId());
+                break;
+            }
+            case 2: {
+                playlist.remove(track.getTrackId());
+                break;
+            }
+            case 3: {
+                Track newTrack = getTrackFromConsole();
+                playlist.addTrack(newTrack.getTrackId());
+                break;
+            }
+        }
+    }
+
     public static void main(String[] args) {
         Style rock = new Style("Rock");
         Style pop = new Style("Pop");
@@ -61,24 +116,16 @@ public class TestRun {
 
 
 
-        Scanner in = new Scanner(System.in);
-        System.out.print("Input nameOfTrack: ");
-        String nameOfTrack = in.nextLine();
-        System.out.print("Input artist: ");
-        String artist = in.nextLine();
-        System.out.print("Input album: ");
-        String album = in.nextLine();
-        System.out.print("Input time: ");
-        long time = in.nextLong();
-        System.out.print("Input nameOfStyle: ");
-        String nameOfStyle = in.nextLine();
-        System.out.printf("nameOfTrack: %s  artist: %s  album: %s time: %l nameOfStyle: %s \n", nameOfTrack, artist, album, time, nameOfTrack);
-        in.close();
-
-
         FileController.saveObjToFile(rapTrack, "saveTrack.txt");
         Track getTrack = FileController.getTrackFromFile("saveTrack.txt");
         System.out.println("Deserialized track: ");
         System.out.println(FileController.TrackToJSON(getTrack));
+
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        //Track trackFromConsole = getTrackFromConsole();
+        playlist.addTrack(rapTrack);
+        System.out.println(playlist.toString());
+        menu(rapTrack, playlist);
+        System.out.println(playlist.toString());
     }
 }
