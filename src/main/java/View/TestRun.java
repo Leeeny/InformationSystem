@@ -4,11 +4,8 @@ import Controller.FileController;
 import Model.Playlist;
 import Model.Style;
 import Model.Track;
+import java.util.Scanner;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -61,6 +58,23 @@ public class TestRun {
         System.out.println(trackStr);
 
         System.out.println(rockTrack1.getTrackId());
+
+
+
+        Scanner in = new Scanner(System.in);
+        System.out.print("Input nameOfTrack: ");
+        String nameOfTrack = in.nextLine();
+        System.out.print("Input artist: ");
+        String artist = in.nextLine();
+        System.out.print("Input album: ");
+        String album = in.nextLine();
+        System.out.print("Input time: ");
+        long time = in.nextLong();
+        System.out.print("Input nameOfStyle: ");
+        String nameOfStyle = in.nextLine();
+        System.out.printf("nameOfTrack: %s  artist: %s  album: %s time: %l nameOfStyle: %s \n", nameOfTrack, artist, album, time, nameOfTrack);
+        in.close();
+
 
         FileController.saveObjToFile(rapTrack, "saveTrack.txt");
         Track getTrack = FileController.getTrackFromFile("saveTrack.txt");
