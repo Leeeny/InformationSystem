@@ -5,19 +5,26 @@ import Model.Playlist;
 import Model.Style;
 import Model.Track;
 
+import java.io.IOException;
 import java.util.*;
 
 
 public class TestRun {
 
+    public static String inputValidation(String inp, Scanner scanner) {
+        System.out.println(inp);
+        String str = null;
+        do {
+            str = scanner.nextLine();
+        } while (Objects.equals(str, "") || Objects.equals(str, null));
+        return str;
+    }
+
     public static Track getTrackFromConsole() {
         Scanner in = new Scanner(System.in);
-        System.out.print("Input nameOfTrack: ");
-        String nameOfTrack = in.nextLine();
-        System.out.print("Input artist: ");
-        String artist = in.nextLine();
-        System.out.print("Input album: ");
-        String album = in.nextLine();
+        String nameOfTrack = inputValidation("Input nameOfTrack: ", in);
+        String artist = inputValidation("Input artist: ", in);
+        String album = inputValidation("Input album: ", in);
         System.out.print("Input time: ");
         String s_time = in.nextLine();
         long time = 0;
@@ -33,7 +40,7 @@ public class TestRun {
         return new Track(nameOfTrack, artist, album, time, new Style(nameOfStyle));
     }
 
-    public static int getUserChoice(Track track){
+    public static int getUserChoice(Track track) {
         System.out.println(track.toString());
         System.out.println("Do you want to change(1), delete(2) or add new track(3)?");
         Scanner in = new Scanner(System.in);
@@ -47,21 +54,18 @@ public class TestRun {
 
     public static void menu(Track track, Playlist playlist) {
         int choose = getUserChoice(track);
-        switch (choose){
-            case 1: {
+        switch (choose) {
+            case 1 -> {
                 playlist.remove(track.getTrackId());
                 track = getTrackFromConsole();
                 playlist.addTrack(track.getTrackId());
-                break;
             }
-            case 2: {
+            case 2 -> {
                 playlist.remove(track.getTrackId());
-                break;
             }
-            case 3: {
+            case 3 -> {
                 Track newTrack = getTrackFromConsole();
                 playlist.addTrack(newTrack.getTrackId());
-                break;
             }
         }
     }
@@ -115,17 +119,16 @@ public class TestRun {
         System.out.println(rockTrack1.getTrackId());
 
 
-
         FileController.saveObjToFile(rapTrack, "saveTrack.txt");
-        Track getTrack = FileController.getTrackFromFile("saveTrack.txt");
+        Track getTrack = FileController.getObjFromFile("saveTrack.txt");
         System.out.println("Deserialized track: ");
         System.out.println(FileController.TrackToJSON(getTrack));
 
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        //Track trackFromConsole = getTrackFromConsole();
-        playlist.addTrack(rapTrack);
+        Track trackFromConsole = getTrackFromConsole();
+        playlist.addTrack(trackFromConsole);
         System.out.println(playlist.toString());
-        menu(rapTrack, playlist);
+        menu(trackFromConsole, playlist);
         System.out.println(playlist.toString());
     }
 }
