@@ -2,11 +2,17 @@ package Controller;
 
 import Model.Style;
 import Model.Track;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class FileController {
 
@@ -68,6 +74,55 @@ public class FileController {
         return new Track(trackName, artist, album, time, style);
     }
 
+    public static Track trackFromString(String str) throws ParseException {
+        JSONParser parser = new JSONParser();
+        JSONObject jsonObject = (JSONObject) parser.parse(str);
+        String trackName = (String) jsonObject.get("track_name");
+        String artist = (String) jsonObject.get("artist");
+        String album = (String) jsonObject.get("album");
+        Long time = (Long) jsonObject.get("time");
+        String style_name = (String) jsonObject.get("style_name");
+        Style style = new Style(style_name);
+        return new Track(trackName, artist, album, time, style);
+    }
+
+    public static HashMap<UUID, Track> getUUIDHashFromString(String str) throws ParseException, IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        HashMap <UUID, Track> result = objectMapper.readValue(str, HashMap.class);
+        return result;
+    }
+
+    public static HashMap<String, Track> getHashFromString(String str) throws ParseException, IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        HashMap <String, Track> result = objectMapper.readValue(str, HashMap.class);
+        return result;
+    }
+
+    public static String getStrFromHash(HashMap<UUID, Track> hashMap) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(hashMap);
+    }
+
+    public static void hashToFile(HashMap<UUID, Track> hashMap, String filename) {
+        try (FileWriter fileWriter = new FileWriter(filename)) {
+            fileWriter.write(getStrFromHash(hashMap));
+            fileWriter.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static HashMap<UUID, Track> getHashFromFile(String filename){
+        HashMap<UUID, Track> result = null;
+        try {
+            String tmp = new String(Files.readAllBytes(Paths.get(filename)));
+            result = getUUIDHashFromString(tmp);
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     public static Style styleFromFile(String filename) {
         JSONObject jsonObject1 = FileToJSON(filename);
         String styleName = (String) jsonObject1.get("style_name");
@@ -86,7 +141,7 @@ public class FileController {
         }
     }
 
-    public static <T> T getTrackFromFile(String filename) {
+    public static <T> T getObjFromFile(String filename) {
         T obj = null;
         try {
             FileInputStream fileInputStream = new FileInputStream(filename);
