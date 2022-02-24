@@ -34,7 +34,7 @@ public class GridBagLayoutTest
         constraints.gridy = 1;
         constraints.gridwidth = 2;// нулевая ячейка таблицы по горизонтали
         container.add(radio1, constraints);
-        //radio1.addActionListener(new ButtonEventListener());
+       
 
 
         radio2 = new JButton("Delete track");
