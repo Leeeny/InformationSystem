@@ -2,18 +2,14 @@ package View;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class GridBagLayoutTest {
-
-
     public static void createPanelUI(Container container) {
-        JButton button;
+        JButton saveButton;
         JTable table;
-        JButton radio1;
-        JButton radio2;
-        JButton radio3;
+        JButton changeButton;
+        JButton deleteButton;
+        JButton addButton;
 
         container.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         container.setLayout(new GridBagLayout());
@@ -23,23 +19,23 @@ public class GridBagLayoutTest {
         constraints.weightx = 0.5;
         constraints.gridy = 0;  // нулевая ячейка таблицы по вертикали
 
-        radio1 = new JButton("Change track");
+        changeButton = new JButton("Change track");
         constraints.gridx = 0;
         constraints.gridy = 1;
         constraints.gridwidth = 2;// нулевая ячейка таблицы по горизонтали
-        container.add(radio1, constraints);
+        container.add(changeButton, constraints);
 
-        radio2 = new JButton("Delete track");
+        deleteButton = new JButton("Delete track");
         constraints.gridx = 0;
         constraints.gridy = 2;
         constraints.gridwidth = 2;// первая ячейка таблицы по горизонтали
-        container.add(radio2, constraints);
+        container.add(deleteButton, constraints);
 
-        radio3 = new JButton("Add track");
+        addButton = new JButton("Add track");
         constraints.gridx = 0;
         constraints.gridy = 3;
         constraints.gridwidth = 2;// вторая ячейка таблицы по горизонтали
-        container.add(radio3, constraints);
+        container.add(addButton, constraints);
 
         String[] columnNames = {
                 "Name",
@@ -60,7 +56,6 @@ public class GridBagLayoutTest {
                 {"song9", "artist9", "album9", "300"},
         };
 
-
         table = new JTable(data, columnNames);
         constraints.ipady = 2;   // кнопка высокая
         constraints.weightx = 0.5;
@@ -69,49 +64,35 @@ public class GridBagLayoutTest {
         constraints.gridy = 0;    // первая ячейка по вертикали
 
         container.add(table, constraints);
-        button = new JButton("Save playlist");
+        saveButton = new JButton("Save playlist");
         constraints.gridy = 6;
-        container.add(button, constraints);
+        container.add(saveButton, constraints);
 
-        button.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String message = "";
-                message += "Playlist saved\n";
-
-                JOptionPane.showMessageDialog(null, message, "Output", JOptionPane.PLAIN_MESSAGE);
-            }
+        saveButton.addActionListener(e -> {
+            String message = "";
+            message += "Playlist saved\n";
+            JOptionPane.showMessageDialog(null, message, "Output", JOptionPane.PLAIN_MESSAGE);
         });
 
-        radio1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFrame frame = new JFrame();
-                frame.setSize(300, 300);
-                frame.setVisible(true);
-                JTextField input = new JTextField(4);
-            }
+        changeButton.addActionListener(e -> {
+            JFrame frame = new JFrame();
+            frame.setSize(300, 300);
+            frame.setVisible(true);
+            JTextField input = new JTextField(4);
         });
 
-        radio2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFrame frame = new JFrame();
-                frame.setSize(300, 300);
-                frame.setVisible(true);
-                JTextField input = new JTextField(4);
-            }
+        deleteButton.addActionListener(e -> {
+            JFrame frame = new JFrame();
+            frame.setSize(300, 300);
+            frame.setVisible(true);
+            JTextField input = new JTextField(4);
         });
 
-        radio3.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFrame frame = new JFrame();
-                frame.setSize(300, 300);
-                frame.setVisible(true);
-                JTextField input = new JTextField(4);
-            }
+        addButton.addActionListener(e -> {
+            JFrame frame = new JFrame();
+            frame.setSize(300, 300);
+            frame.setVisible(true);
+            JTextField input = new JTextField(4);
         });
     }
 
