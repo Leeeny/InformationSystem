@@ -10,9 +10,10 @@ public class Main extends JFrame {
 
     private JTable m_simpleTable;
     private SimpleTableModel m_simpleTableModel;
+    private JButton submitButton;
+    private JButton deleteButton;
 
-
-    class SimpleTableModel extends AbstractTableModel {
+    static class SimpleTableModel extends AbstractTableModel {
         public String[] m_colNames = {
                 "Name",
                 "Artist",
@@ -75,7 +76,7 @@ public class Main extends JFrame {
         }
     }
 
-    class Data {
+    static class Data {
 
         private String name;
 
@@ -129,6 +130,15 @@ public class Main extends JFrame {
     }
 
     public Main() {
+        /*Container container = this.getContentPane();
+        container.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        container.setLayout(new GridBagLayout());*/
+
+        //GridBagConstraints constraints = new GridBagConstraints();
+       /* constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 0.5;
+        constraints.gridy = 0;*/
+
         Vector<Data> dummyMacData = new Vector<>(10, 10);
         dummyMacData.addElement(new Data("Do I Wanna Know?", "Arctic Monkeys", "Album", 1023L));
         dummyMacData.addElement(new Data("Evil Twin", "Arctic Monkeys", "Album", 348L));
@@ -136,17 +146,28 @@ public class Main extends JFrame {
         dummyMacData.addElement(new Data("Evil Twin", "Arctic Monkeys", "Album", 10L));
         dummyMacData.addElement(new Data("Heat Waves", "Glass Animals", "Album", 1024L));
 
-        m_simpleTableModel = new SimpleTableModel(dummyMacData);
-        m_simpleTable = new JTable(m_simpleTableModel);
-        GridBagConstraints constraints = new GridBagConstraints();
-        setLayout(new GridBagLayout());
-        JScrollPane scrollPane = new JScrollPane(m_simpleTable);
-        JButton submitButton = new JButton("Submit");
-        JButton deleteButton = new JButton("Delete");
 
+        m_simpleTableModel = new SimpleTableModel(dummyMacData);
+
+        m_simpleTable = new JTable(m_simpleTableModel);
+        /*constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.gridwidth = 2;*/
+        setLayout(new GridBagLayout());
+        //getContentPane().add(m_simpleTable);
+        JScrollPane scrollPane = new JScrollPane(m_simpleTable);
         getContentPane().add(scrollPane);
+        submitButton = new JButton("Submit");
+        /*constraints.gridx = 0;
+        constraints.gridy = 2;
+        constraints.gridwidth = 1;*/
         getContentPane().add(submitButton);
+        deleteButton = new JButton("Delete");
+       /* constraints.gridx = 1;
+        constraints.gridy = 2;
+        constraints.gridwidth = 1;*/
         getContentPane().add(deleteButton);
+
         submitButton.addActionListener(e -> {
             System.out.println(Arrays.toString(m_simpleTable.getSelectedRows()));
         });
