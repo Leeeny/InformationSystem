@@ -20,7 +20,6 @@ public class Server implements Runnable {
     }
 
     private void parceEntery(String catched, HashMap<UUID, Track> hashMap) throws ParseException {
-
         String[] splited = catched.split("@");
         int choose = Integer.parseInt(splited[0]);
         switch (choose) {
@@ -50,21 +49,24 @@ public class Server implements Runnable {
                 Track newTrack = FileController.trackFromString(strTrack);
                 hashMap.put(newTrack.getTrackId(), newTrack);
             }
+            //quit
+            case 4 -> {
+
+            }
+
         }
     }
 
     @Override
     public void run() {
-        try {
-            DataOutputStream dataOutputStream = new DataOutputStream(clientDialog.getOutputStream());
-            DataInputStream dataInputStream = new DataInputStream(clientDialog.getInputStream());
+        try (DataOutputStream dataOutputStream = new DataOutputStream(clientDialog.getOutputStream());
+             DataInputStream dataInputStream = new DataInputStream(clientDialog.getInputStream())) {
             String toCatch;
             HashMap<UUID, Track> hashMap = FileController.getHashFromFile("hashMap.txt");
 
             System.out.println("Server initialized");
 
             while (!clientDialog.isClosed()) {
-
                 //отправляем на клиент данные с сервера
                 Connection.send(dataOutputStream, FileController.getStrFromHash(hashMap));
                 System.out.println("Server send hashMap");
@@ -77,18 +79,13 @@ public class Server implements Runnable {
                 parceEntery(toCatch, hashMap);
                 System.out.println(hashMap);
                 FileController.hashToFile(hashMap, "hashMap.txt");
-
             }
             System.out.println("Client disconnected");
             System.out.println("Closing connections & channels.");
-            dataInputStream.close();
-            dataOutputStream.close();
             clientDialog.close();
-
             System.out.println("Closing connections & channels - DONE.");
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         } // TODO Auto-generated catch block
-
     }
 }

@@ -1,14 +1,10 @@
 package Controller.net;
 
-import Model.Track;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -18,7 +14,6 @@ public class ServerFabric {
     public static void main(String[] args) {
         try (ServerSocket server = new ServerSocket(3345);
              BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in))) {
-            HashMap<UUID, Track> tracksIdAndNames = new HashMap<>();
             System.out.println("Server socket created");
             while (!server.isClosed()) {
                 if (bufferedReader.ready()) {

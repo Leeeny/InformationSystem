@@ -3,6 +3,7 @@ package Controller.net;
 import Controller.FileController;
 import Model.Style;
 import Model.Track;
+import View.GridBagLayoutTest;
 import org.json.simple.parser.ParseException;
 
 import java.io.DataInputStream;
@@ -56,25 +57,30 @@ public class Client implements Runnable {
 
     //вот это из вью
     public static int getUserChoice(Scanner in) {
-        System.out.println("Do you want to show playlist(0), change(1), delete(2), add new track(3)?");
+        System.out.println("Do you want to show playlist(0), change(1), delete(2), add new track(3) or quit(4)?");
         String choose = null;
         do {
             choose = in.nextLine();
-        } while (!Objects.equals(choose, "0") && !Objects.equals(choose, "1") && !Objects.equals(choose, "2") && !Objects.equals(choose, "3"));
+        } while (!Objects.equals(choose, "0")
+                && !Objects.equals(choose, "1")
+                && !Objects.equals(choose, "2")
+                && !Objects.equals(choose, "3")
+                && !Objects.equals(choose, "4"));
         System.out.println("Your choose " + choose);
         return Integer.parseInt(choose);
     }
 
-    public static String chosenTrack(HashMap<String, Track> hashMap, Scanner in) {
+    public static String chosenTrack(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> hashMap, Scanner in) {
         System.out.println("Please choose track from playlist");
         System.out.println(hashMap.toString());
         String id = ((inputValidation("Enter ID: ", in)));
         return id;
     }
 
-    public static String menu(HashMap<String, Track> hashMap, Scanner in) {
+    public String menu(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> hashMap, Scanner in, GridBagLayoutTest jFrame) {
         String trackId = chosenTrack(hashMap, in);
-        int choose = getUserChoice(in);
+        //int choose = getUserChoice(in);
+        int choose = jFrame.getChoose();
         String toSend = String.valueOf(choose);
         switch (choose) {
             //show playlist
@@ -85,7 +91,7 @@ public class Client implements Runnable {
             case 1 -> {
                 hashMap.keySet().removeIf(key -> Objects.equals(key, trackId));
                 Track track = getTrackFromConsole();
-                hashMap.put(trackId, track);
+                //hashMap.put(trackId, track);
                 toSend += "@" + trackId + "@" + FileController.TrackToJSON(track);
             }
             //remove track
@@ -96,8 +102,12 @@ public class Client implements Runnable {
             //add new track
             case 3 -> {
                 Track newTrack = getTrackFromConsole();
-                hashMap.put(newTrack.getTrackId().toString(), newTrack);
+                //hashMap.put(newTrack.getTrackId().toString(), newTrack);
                 toSend += "@" + newTrack.getTrackId().toString() + "@" + FileController.TrackToJSON(newTrack);
+            }
+            //quit мб удалить ваще, обработка выхода в бесконечном цикле происходит
+            case 4 -> {
+
             }
         }
         return toSend;
@@ -112,31 +122,34 @@ public class Client implements Runnable {
     public void run() {
         try (DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
              DataInputStream dataInputStream = new DataInputStream(socket.getInputStream())) {
-            Scanner in = new Scanner(System.in);
-            String gettingHash;
-            HashMap<String, Track> hashMap;
-            System.out.println("Client initialized");
-            //ловим hash с сервера
-            gettingHash = Connection.recv(dataInputStream);
-            //Thread.sleep(10);
+            boolean isExecute = false;
+            GridBagLayoutTest jFrame = new GridBagLayoutTest();
+            while (!isExecute) {
+                Scanner in = new Scanner(System.in);
+                String gettingHash;
+                HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> hashMap;
+                System.out.println("Client initialized");
+                //ловим hash с сервера
+                gettingHash = Connection.recv(dataInputStream);
 
-            //тут отображаем во вью то, что пришло
-            System.out.println("++++++++++Info from Server+++++++++");
-            System.out.println(gettingHash);
-            hashMap = FileController.getHashFromString(gettingHash);
+                //тут отображаем во вью то, что пришло
+                System.out.println("++++++++++Info from Server+++++++++");
+                System.out.println(gettingHash);
+                hashMap = FileController.getHashFromString(gettingHash);
+                jFrame.runView(hashMap);
 
-            //тут к нам приходят изменения из вью
-            String toSend = menu(hashMap, in);
+                //тут к нам приходят изменения из вью
+                String toSend = menu(hashMap, in, jFrame);
+                if (Objects.equals(toSend, "4"))
+                    isExecute = true;
 
-            //это я проверяю, что все изменилось, это не надо во вью
-            System.out.println(hashMap);
+                //это я проверяю, что все изменилось, это не надо во вью
+                System.out.println(hashMap);
 
-            //отправляем изменения серверу
-            Connection.send(dataOutputStream, toSend);
-
-            Thread.sleep(5000);
-
-        } catch (IOException | InterruptedException | ParseException e) {
+                //отправляем изменения серверу
+                Connection.send(dataOutputStream, toSend);
+            }
+        } catch (IOException | ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

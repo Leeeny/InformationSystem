@@ -12,6 +12,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.UUID;
 
 public class FileController {
@@ -92,9 +93,9 @@ public class FileController {
         return result;
     }
 
-    public static HashMap<String, Track> getHashFromString(String str) throws ParseException, IOException {
+    public static HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> getHashFromString(String str) throws ParseException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        HashMap <String, Track> result = objectMapper.readValue(str, HashMap.class);
+        HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> result = objectMapper.readValue(str, HashMap.class);
         return result;
     }
 
