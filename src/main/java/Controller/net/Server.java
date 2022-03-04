@@ -31,8 +31,9 @@ public class Server implements Runnable {
             case 1 -> {
                 String strId = splited[1];
                 String strTrack = splited[2];
-                UUID trackId = UUID.fromString(strId.toString());
-                hashMap.keySet().removeIf(key -> Objects.equals(key, trackId));
+                UUID trackId = UUID.fromString(strId);
+                //hashMap.keySet().removeIf(key -> Objects.equals(key, trackId));
+                hashMap.remove(strId);
                 Track track = FileController.trackFromString(strTrack.toString());
                 hashMap.put(trackId, track);
             }
@@ -40,7 +41,8 @@ public class Server implements Runnable {
             case 2 -> {
                 String strId = splited[1];
                 UUID trackId = UUID.fromString(strId);
-                hashMap.keySet().removeIf(key -> Objects.equals(key, trackId));
+                hashMap.remove(strId);
+                //hashMap.keySet().removeIf(key -> Objects.equals(key, trackId));
             }
             //add new track
             case 3 -> {

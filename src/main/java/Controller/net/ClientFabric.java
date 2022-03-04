@@ -5,12 +5,11 @@ import java.util.concurrent.Executors;
 
 public class ClientFabric {
     public static void main(String[] args) throws InterruptedException {
-        ExecutorService exec = Executors.newFixedThreadPool(10);
-        //newCachedThreadPool
-
+        ExecutorService exec = Executors.newCachedThreadPool();
+       //for (int i = 0; i < 5; i++) {
             exec.execute(new Client());
             Thread.sleep(10);
-
+        //}
         exec.shutdown();
     }
 }

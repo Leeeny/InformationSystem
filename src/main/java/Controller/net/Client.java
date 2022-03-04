@@ -101,22 +101,28 @@ public class Client implements Runnable {
                     //Track track = getTrackFromConsole();
                     Track track = jFrame.getTrack();
                     toSend += "@" + trackId + "@" + FileController.TrackToJSON(track);
+                    jFrame.setChoose(-1);
+                    return toSend;
                 }
                 //remove track
                 case 2 -> {
                     String trackId = jFrame.getTrackID();
-                    hashMap.keySet().removeIf(key -> Objects.equals(key, trackId));
+                    //hashMap.keySet().removeIf(key -> Objects.equals(key, trackId));
                     toSend += "@" + trackId;
+                    jFrame.setChoose(-1);
+                    return toSend;
                 }
                 //add new track
                 case 3 -> {
                     //Track track = getTrackFromConsole();
                     Track track = jFrame.getTrack();
                     toSend += "@" + track.getTrackId().toString() + "@" + FileController.TrackToJSON(track);
+                    jFrame.setChoose(-1);
+                    return toSend;
                 }
                 //quit мб удалить ваще, обработка выхода в бесконечном цикле происходит
                 case 4 -> {
-
+                    jFrame.setChoose(-1);
                 }
             }
         }

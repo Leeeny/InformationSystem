@@ -163,10 +163,10 @@ public class GridBagLayoutTest extends JFrame {
             f.pack();
             f.setVisible(true);
             submitButton.addActionListener(y -> {
-                choose = 1;
                 //функция поиска через row1 для hashMap
                 trackID = uuids[row1];
                 track = new Track(nameOfSongTF.getText(), artistTF.getText(), albumTF.getText(), Long.parseLong(timeTF.getText()), new Style("toAdd!!!"));
+                choose = 1;
                 /*table.setValueAt(nameOfSongTF.getText(), row1, 0);
                 table.setValueAt(artistTF.getText(), row1, 1);
                 table.setValueAt(albumTF.getText(), row1, 2);
@@ -177,6 +177,8 @@ public class GridBagLayoutTest extends JFrame {
 
         //удалить
         deleteButton.addActionListener(e -> {
+            int row1 = table.getSelectedRows()[0];
+            trackID = uuids[row1];
             choose = 2;
             //отправлять запрос на сервер
             //функция поиска через row1 для hashMap
@@ -186,6 +188,7 @@ public class GridBagLayoutTest extends JFrame {
         addButton.addActionListener(e -> {
             JFrame f = new JFrame("Add new track");
             f.getContentPane().setLayout(new FlowLayout());
+            int row1 = table.getSelectedRows()[0];
             JTextField nameOfSongTF = new JTextField("Name of song", 10);
             JTextField artistTF = new JTextField("Artist", 10);
             JTextField timeTF = new JTextField("Time", 10);
@@ -201,6 +204,9 @@ public class GridBagLayoutTest extends JFrame {
             submitButton.addActionListener(y -> {
                 //отправляем запрос на сервер
                 //функция обновления через row1 для hashMap
+                trackID = uuids[row1];
+                track = new Track(nameOfSongTF.getText(), artistTF.getText(), albumTF.getText(), Long.parseLong(timeTF.getText()), new Style("toAdd!!!"));
+                choose = 1;
                 choose = 3;
                 f.dispose();
             });
