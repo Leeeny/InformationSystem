@@ -35,7 +35,7 @@ public class Client implements Runnable {
     }
 
     //это заменить на функцию из вью
-    public static Track getTrackFromConsole() {
+   /* public static Track getTrackFromConsole() {
         Scanner in = new Scanner(System.in);
         String nameOfTrack = inputValidation("Input nameOfTrack: ", in);
         String artist = inputValidation("Input artist: ", in);
@@ -53,7 +53,7 @@ public class Client implements Runnable {
         String nameOfStyle = in.nextLine();
         System.out.printf("nameOfTrack: %s  artist: %s  album: %s time: %s nameOfStyle: %s \n", nameOfTrack, artist, album, time, nameOfStyle);
         return new Track(nameOfTrack, artist, album, time, new Style(nameOfStyle));
-    }
+    }*/
 
     //вот это из вью
     public static int getUserChoice(Scanner in) {
@@ -77,45 +77,50 @@ public class Client implements Runnable {
         return id;
     }
 
-    public String menu(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> hashMap, Scanner in, GridBagLayoutTest jFrame) {
-        String trackId = chosenTrack(hashMap, in);
+    public String menu(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> hashMap, Scanner in, GridBagLayoutTest jFrame) throws InterruptedException {
+        //String trackId = chosenTrack(hashMap, in);
         //int choose = getUserChoice(in);
-        int choose = jFrame.getChoose();
-        String toSend = String.valueOf(choose);
-        switch (choose) {
-            //show playlist
-            case 0 -> {
-                System.out.println(hashMap.toString());
+        int choose = - 1;
+        String toSend = "";
+        while (choose == -1) {
+            choose = jFrame.getChoose();
+            if (choose == -1) {
+                Thread.sleep(10);
+                continue;
             }
-            //change track
-            case 1 -> {
-                hashMap.keySet().removeIf(key -> Objects.equals(key, trackId));
-                Track track = getTrackFromConsole();
-                //hashMap.put(trackId, track);
-                toSend += "@" + trackId + "@" + FileController.TrackToJSON(track);
-            }
-            //remove track
-            case 2 -> {
-                hashMap.keySet().removeIf(key -> Objects.equals(key, trackId));
-                toSend += "@" + trackId;
-            }
-            //add new track
-            case 3 -> {
-                Track newTrack = getTrackFromConsole();
-                //hashMap.put(newTrack.getTrackId().toString(), newTrack);
-                toSend += "@" + newTrack.getTrackId().toString() + "@" + FileController.TrackToJSON(newTrack);
-            }
-            //quit мб удалить ваще, обработка выхода в бесконечном цикле происходит
-            case 4 -> {
+            toSend = String.valueOf(choose);
+            switch (choose) {
+                //show playlist
+                case 0 -> {
+                    System.out.println(hashMap.toString());
+                }
+                //change track
+                case 1 -> {
+                    String trackId = jFrame.getTrackID();
+                    hashMap.keySet().removeIf(key -> Objects.equals(key, trackId));
+                    //Track track = getTrackFromConsole();
+                    Track track = jFrame.getTrack();
+                    toSend += "@" + trackId + "@" + FileController.TrackToJSON(track);
+                }
+                //remove track
+                case 2 -> {
+                    String trackId = jFrame.getTrackID();
+                    hashMap.keySet().removeIf(key -> Objects.equals(key, trackId));
+                    toSend += "@" + trackId;
+                }
+                //add new track
+                case 3 -> {
+                    //Track track = getTrackFromConsole();
+                    Track track = jFrame.getTrack();
+                    toSend += "@" + track.getTrackId().toString() + "@" + FileController.TrackToJSON(track);
+                }
+                //quit мб удалить ваще, обработка выхода в бесконечном цикле происходит
+                case 4 -> {
 
+                }
             }
         }
         return toSend;
-    }
-
-    //метод, получающий из вью комманду и возвращающий ее номер (мб удалить или реализовать передачу числа сразу во вью)
-    public int getCommandToSend() {
-        return 0;
     }
 
     @Override
@@ -149,7 +154,7 @@ public class Client implements Runnable {
                 //отправляем изменения серверу
                 Connection.send(dataOutputStream, toSend);
             }
-        } catch (IOException | ParseException e) {
+        } catch (IOException | ParseException | InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

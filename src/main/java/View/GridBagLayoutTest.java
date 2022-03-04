@@ -1,5 +1,6 @@
 package View;
 
+import Model.Style;
 import Model.Track;
 
 import javax.swing.*;
@@ -11,6 +12,10 @@ import java.util.List;
 public class GridBagLayoutTest extends JFrame {
     //HashMap<String, Track> gettingHash;
     private int choose;
+    private String trackID;
+    private String[] uuids;
+    private Track track;
+    private HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash;
 
     public int getChoose() {
         return choose;
@@ -20,29 +25,57 @@ public class GridBagLayoutTest extends JFrame {
         this.choose = choose;
     }
 
+    public String getTrackID() {
+        return trackID;
+    }
+
+    public void setTrackID(String trackID) {
+        this.trackID = trackID;
+    }
+
     public GridBagLayoutTest() throws HeadlessException {
         this.choose = -1;
     }
 
-    public static Vector<Vector<String>> getInfo(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash) {
+    public String[] getUuids() {
+        return uuids;
+    }
+
+    public void setUuids(String[] uuids) {
+        this.uuids = uuids;
+    }
+
+    public Track getTrack() {
+        return track;
+    }
+
+    public void setTrack(Track track) {
+        this.track = track;
+    }
+
+    public Vector<Vector<String>> getInfo(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash) {
+        this.gettingHash = gettingHash;
         Vector<Vector<String>> info = new Vector<>();
+        uuids = gettingHash.keySet().toArray(new String[0]);
         for (String uuid : gettingHash.keySet()) {
             LinkedHashMap<String, LinkedHashMap<String, Object>> keys = gettingHash.get(uuid);
             Vector<String> vector = new Vector<>();
             for (String tracks : keys.keySet()) {
-                 vector = new Vector<String>(List.of(new String[] {
-                        String.valueOf(keys.get("nameOfTrack")),
-                        String.valueOf(keys.get("artist")),
-                        String.valueOf(keys.get("album")),
-                        String.valueOf(keys.get("time")),
-                }));
+                vector = new Vector<String>(List.of(new String[]{String.valueOf(keys.get("nameOfTrack")), String.valueOf(keys.get("artist")), String.valueOf(keys.get("album")), String.valueOf(keys.get("time")),}));
             }
             info.add(vector);
         }
         return info;
     }
 
-    public static void createPanelUI(Container container, HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash) {
+    //получение первого трека в таблице, совпадающего по ключевым названиям с главными критериями
+    private String updateTrackID(int row, JTable table) {
+        String uuid = "";
+
+        return uuid;
+    }
+
+    public void createPanelUI(Container container, HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash) {
         JButton saveButton;
         JTable table;
         JButton changeButton;
@@ -81,7 +114,6 @@ public class GridBagLayoutTest extends JFrame {
         columnNames.add("Album");
         columnNames.add("Time");
 
-
         Vector<Vector<String>> info = getInfo(gettingHash);
       /*  info.add(new Vector<String>(List.of(new String[]{"song1", "artist1", "album1", "100"})));
         info.add(new Vector<String>(List.of(new String[]{"song2", "artist2", "album2", "200"})));
@@ -92,8 +124,6 @@ public class GridBagLayoutTest extends JFrame {
 
 
         table = new JTable(info, columnNames);
-
-
         constraints.ipady = 2; // кнопка высокая
         constraints.weightx = 0.5;
         constraints.gridwidth = 2; // размер кнопки в две ячейки
@@ -107,12 +137,14 @@ public class GridBagLayoutTest extends JFrame {
         constraints.gridy = 6;
         container.add(saveButton, constraints);
 
+        /*//сохранить
         saveButton.addActionListener(e -> {
             String message = "";
             message += "Playlist saved\n";
             JOptionPane.showMessageDialog(null, message, "Output", JOptionPane.PLAIN_MESSAGE);
-        });
+        });*/
 
+        //изменить трек
         changeButton.addActionListener(e -> {
             JFrame f = new JFrame("Change track");
             f.getContentPane().setLayout(new FlowLayout());
@@ -121,6 +153,7 @@ public class GridBagLayoutTest extends JFrame {
             JTextField artistTF = new JTextField((String) table.getValueAt(row1, 1), 10);
             JTextField albumTF = new JTextField((String) table.getValueAt(row1, 2), 10);
             JTextField timeTF = new JTextField((String) table.getValueAt(row1, 3), 10);
+            //добавить имя стиля!
             JButton submitButton = new JButton("Submit");
             f.getContentPane().add(nameOfSongTF);
             f.getContentPane().add(artistTF);
@@ -130,7 +163,10 @@ public class GridBagLayoutTest extends JFrame {
             f.pack();
             f.setVisible(true);
             submitButton.addActionListener(y -> {
-                //отправлять запрос на сервер
+                choose = 1;
+                //функция поиска через row1 для hashMap
+                trackID = uuids[row1];
+                track = new Track(nameOfSongTF.getText(), artistTF.getText(), albumTF.getText(), Long.parseLong(timeTF.getText()), new Style("toAdd!!!"));
                 /*table.setValueAt(nameOfSongTF.getText(), row1, 0);
                 table.setValueAt(artistTF.getText(), row1, 1);
                 table.setValueAt(albumTF.getText(), row1, 2);
@@ -139,12 +175,16 @@ public class GridBagLayoutTest extends JFrame {
             });
         });
 
+        //удалить
         deleteButton.addActionListener(e -> {
+            choose = 2;
             //отправлять запрос на сервер
+            //функция поиска через row1 для hashMap
         });
 
+        //добавить новый
         addButton.addActionListener(e -> {
-            JFrame f = new JFrame("Change track");
+            JFrame f = new JFrame("Add new track");
             f.getContentPane().setLayout(new FlowLayout());
             JTextField nameOfSongTF = new JTextField("Name of song", 10);
             JTextField artistTF = new JTextField("Artist", 10);
@@ -160,6 +200,8 @@ public class GridBagLayoutTest extends JFrame {
             f.setVisible(true);
             submitButton.addActionListener(y -> {
                 //отправляем запрос на сервер
+                //функция обновления через row1 для hashMap
+                choose = 3;
                 f.dispose();
             });
         });
