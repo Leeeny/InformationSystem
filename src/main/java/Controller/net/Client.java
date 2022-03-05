@@ -25,14 +25,14 @@ public class Client implements Runnable {
         }
     }
 
-    public static String inputValidation(String inp, Scanner scanner) {
+   /* public static String inputValidation(String inp, Scanner scanner) {
         System.out.println(inp);
         String str = null;
         do {
             str = scanner.nextLine();
         } while (Objects.equals(str, "") || Objects.equals(str, null));
         return str;
-    }
+    }*/
 
     //это заменить на функцию из вью
    /* public static Track getTrackFromConsole() {
@@ -56,7 +56,7 @@ public class Client implements Runnable {
     }*/
 
     //вот это из вью
-    public static int getUserChoice(Scanner in) {
+    /*public static int getUserChoice(Scanner in) {
         System.out.println("Do you want to show playlist(0), change(1), delete(2), add new track(3) or quit(4)?");
         String choose = null;
         do {
@@ -68,14 +68,14 @@ public class Client implements Runnable {
                 && !Objects.equals(choose, "4"));
         System.out.println("Your choose " + choose);
         return Integer.parseInt(choose);
-    }
+    }*/
 
-    public static String chosenTrack(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> hashMap, Scanner in) {
+   /* public static String chosenTrack(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> hashMap, Scanner in) {
         System.out.println("Please choose track from playlist");
         System.out.println(hashMap.toString());
         String id = ((inputValidation("Enter ID: ", in)));
         return id;
-    }
+    }*/
 
     public String menu(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> hashMap, Scanner in, GridBagLayoutTest jFrame) throws InterruptedException {
         //String trackId = chosenTrack(hashMap, in);

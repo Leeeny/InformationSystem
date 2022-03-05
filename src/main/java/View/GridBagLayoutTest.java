@@ -10,12 +10,10 @@ import java.util.List;
 
 
 public class GridBagLayoutTest extends JFrame {
-    //HashMap<String, Track> gettingHash;
     private int choose;
     private String trackID;
     private String[] uuids;
     private Track track;
-    private HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash;
 
     public int getChoose() {
         return choose;
@@ -54,29 +52,27 @@ public class GridBagLayoutTest extends JFrame {
     }
 
     public Vector<Vector<String>> getInfo(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash) {
-        this.gettingHash = gettingHash;
         Vector<Vector<String>> info = new Vector<>();
         uuids = gettingHash.keySet().toArray(new String[0]);
         for (String uuid : gettingHash.keySet()) {
             LinkedHashMap<String, LinkedHashMap<String, Object>> keys = gettingHash.get(uuid);
             Vector<String> vector = new Vector<>();
-            for (String tracks : keys.keySet()) {
-                vector = new Vector<String>(List.of(new String[]{String.valueOf(keys.get("nameOfTrack")), String.valueOf(keys.get("artist")), String.valueOf(keys.get("album")), String.valueOf(keys.get("time")),}));
-            }
+
+            vector = new Vector<String>(List.of(new String[] {
+                    String.valueOf(keys.get("nameOfTrack")),
+                    String.valueOf(keys.get("artist")),
+                    String.valueOf(keys.get("album")),
+                    String.valueOf(keys.get("style").get("nameOfStyle")),
+                    String.valueOf(keys.get("time"))
+            }));
+
             info.add(vector);
         }
         return info;
     }
 
-    //получение первого трека в таблице, совпадающего по ключевым названиям с главными критериями
-    private String updateTrackID(int row, JTable table) {
-        String uuid = "";
-
-        return uuid;
-    }
 
     public void createPanelUI(Container container, HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash) {
-        JButton saveButton;
         JTable table;
         JButton changeButton;
         JButton deleteButton;
@@ -112,6 +108,7 @@ public class GridBagLayoutTest extends JFrame {
         columnNames.add("Name");
         columnNames.add("Artist");
         columnNames.add("Album");
+        columnNames.add("Style");
         columnNames.add("Time");
 
         Vector<Vector<String>> info = getInfo(gettingHash);
@@ -133,16 +130,7 @@ public class GridBagLayoutTest extends JFrame {
         //чтобы не было возможности задавать значения таблицы
 
         container.add(table, constraints);
-        saveButton = new JButton("Save playlist");
-        constraints.gridy = 6;
-        container.add(saveButton, constraints);
 
-        /*//сохранить
-        saveButton.addActionListener(e -> {
-            String message = "";
-            message += "Playlist saved\n";
-            JOptionPane.showMessageDialog(null, message, "Output", JOptionPane.PLAIN_MESSAGE);
-        });*/
 
         //изменить трек
         changeButton.addActionListener(e -> {
@@ -152,20 +140,23 @@ public class GridBagLayoutTest extends JFrame {
             JTextField nameOfSongTF = new JTextField((String) table.getValueAt(row1, 0), 10);
             JTextField artistTF = new JTextField((String) table.getValueAt(row1, 1), 10);
             JTextField albumTF = new JTextField((String) table.getValueAt(row1, 2), 10);
-            JTextField timeTF = new JTextField((String) table.getValueAt(row1, 3), 10);
+            JTextField styleTF = new JTextField((String) table.getValueAt(row1, 3), 10);
+            JTextField timeTF = new JTextField((String) table.getValueAt(row1, 4), 10);
             //добавить имя стиля!
             JButton submitButton = new JButton("Submit");
             f.getContentPane().add(nameOfSongTF);
             f.getContentPane().add(artistTF);
             f.getContentPane().add(albumTF);
+            f.getContentPane().add(styleTF);
             f.getContentPane().add(timeTF);
+
             f.getContentPane().add(submitButton);
             f.pack();
             f.setVisible(true);
             submitButton.addActionListener(y -> {
                 //функция поиска через row1 для hashMap
                 trackID = uuids[row1];
-                track = new Track(nameOfSongTF.getText(), artistTF.getText(), albumTF.getText(), Long.parseLong(timeTF.getText()), new Style("toAdd!!!"));
+                track = new Track(nameOfSongTF.getText(), artistTF.getText(), albumTF.getText(), Long.parseLong(timeTF.getText()), new Style(styleTF.getText()));
                 choose = 1;
                 /*table.setValueAt(nameOfSongTF.getText(), row1, 0);
                 table.setValueAt(artistTF.getText(), row1, 1);
@@ -192,12 +183,15 @@ public class GridBagLayoutTest extends JFrame {
             JTextField nameOfSongTF = new JTextField("Name of song", 10);
             JTextField artistTF = new JTextField("Artist", 10);
             JTextField timeTF = new JTextField("Time", 10);
+            JTextField styleTF = new JTextField("Style", 10);
             JTextField albumTF = new JTextField("Album", 10);
             JButton submitButton = new JButton("Submit");
             f.getContentPane().add(nameOfSongTF);
             f.getContentPane().add(artistTF);
-            f.getContentPane().add(timeTF);
             f.getContentPane().add(albumTF);
+            f.getContentPane().add(styleTF);
+            f.getContentPane().add(timeTF);
+
             f.getContentPane().add(submitButton);
             f.pack();
             f.setVisible(true);
@@ -205,7 +199,7 @@ public class GridBagLayoutTest extends JFrame {
                 //отправляем запрос на сервер
                 //функция обновления через row1 для hashMap
                 trackID = uuids[row1];
-                track = new Track(nameOfSongTF.getText(), artistTF.getText(), albumTF.getText(), Long.parseLong(timeTF.getText()), new Style("toAdd!!!"));
+                track = new Track(nameOfSongTF.getText(), artistTF.getText(), albumTF.getText(), Long.parseLong(timeTF.getText()), new Style(styleTF.getText()));
                 choose = 1;
                 choose = 3;
                 f.dispose();
