@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ServerFabric {
+public class MultiThreadServer {
     static ExecutorService executeIt = Executors.newFixedThreadPool(2);
 
     public static void main(String[] args) {
@@ -27,7 +27,7 @@ public class ServerFabric {
                     }
                 }
                 Socket client = server.accept();
-                executeIt.execute( new Server(client));
+                executeIt.execute( new MonoThreadClientHandler(client));
                 System.out.print("Connection accepted.");
             }
             executeIt.shutdown();

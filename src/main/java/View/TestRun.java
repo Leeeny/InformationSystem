@@ -4,8 +4,8 @@ import Controller.FileController;
 import Model.Playlist;
 import Model.Style;
 import Model.Track;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.io.IOException;
 import java.util.*;
 
 
@@ -70,7 +70,7 @@ public class TestRun {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JsonProcessingException {
         Style rock = new Style("Rock");
         Style pop = new Style("Pop");
         Style rap = new Style("Rap");
@@ -91,6 +91,9 @@ public class TestRun {
         tracksIdAndNames.put(rockTrack1.getTrackId(), rockTrack1);
         tracksIdAndNames.put(popTrack.getTrackId(), popTrack);
         tracksIdAndNames.put(rapTrack.getTrackId(), rapTrack);
+
+        System.out.println("==================");
+        System.out.println(FileController.getStrFromHash(tracksIdAndNames));
 
         System.out.println(rockTrack1.toString() + "\nID: " + rockTrack1.getTrackId());
         System.out.println(popTrack.toString() + "\nID: " + popTrack.getTrackId());

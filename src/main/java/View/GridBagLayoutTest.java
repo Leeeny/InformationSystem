@@ -1,26 +1,65 @@
 package View;
 
+import Controller.FileController;
+import Controller.net.Connection;
 import Model.Style;
 import Model.Track;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
 
 public class GridBagLayoutTest extends JFrame {
-    private int choose;
     private String trackID;
     private String[] uuids;
     private Track track;
+    private Vector<Vector<String>> info;
+    private JTable table;
+    private JButton changeButton;
+    private JButton deleteButton;
+    private JButton addButton;
 
-    public int getChoose() {
-        return choose;
+    public JTable getTable() {
+        return table;
     }
 
-    public void setChoose(int choose) {
-        this.choose = choose;
+    public JButton getChangeButton() {
+        return changeButton;
+    }
+
+    public JButton getDeleteButton() {
+        return deleteButton;
+    }
+
+    public JButton getAddButton() {
+        return addButton;
+    }
+
+    //HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash;
+    //DataInputStream dataInputStream;
+    DataOutputStream dataOutputStream;
+
+    public GridBagLayoutTest( DataOutputStream dataOutputStream) {
+        super("Information System!");
+        //this.gettingHash = gettingHash;
+        // Создание окна
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Определить панель содержания
+        //createPanelUI(this.getContentPane(), gettingHash);
+
+        // Показать окно
+        this.pack();
+        this.setVisible(true);
+        this.dataOutputStream = dataOutputStream;
+
     }
 
     public String getTrackID() {
@@ -32,7 +71,7 @@ public class GridBagLayoutTest extends JFrame {
     }
 
     public GridBagLayoutTest() throws HeadlessException {
-        this.choose = -1;
+        //this.choose = -1;
     }
 
     public String[] getUuids() {
@@ -52,13 +91,12 @@ public class GridBagLayoutTest extends JFrame {
     }
 
     public Vector<Vector<String>> getInfo(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash) {
+
         Vector<Vector<String>> info = new Vector<>();
         uuids = gettingHash.keySet().toArray(new String[0]);
         for (String uuid : gettingHash.keySet()) {
             LinkedHashMap<String, LinkedHashMap<String, Object>> keys = gettingHash.get(uuid);
-            Vector<String> vector = new Vector<>();
-
-            vector = new Vector<String>(List.of(new String[] {
+            Vector<String> vector = new Vector<String>(List.of(new String[]{
                     String.valueOf(keys.get("nameOfTrack")),
                     String.valueOf(keys.get("artist")),
                     String.valueOf(keys.get("album")),
@@ -71,15 +109,20 @@ public class GridBagLayoutTest extends JFrame {
         return info;
     }
 
+    public void updatePanelUI() {
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-    public void createPanelUI(Container container, HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash) {
-        JTable table;
-        JButton changeButton;
-        JButton deleteButton;
-        JButton addButton;
+        // Определить панель содержания
+        //createPanelUI(this.getContentPane(), gettingHash);
 
-        container.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        container.setLayout(new GridBagLayout());
+        // Показать окно
+        this.pack();
+        this.setVisible(true);
+    }
+    public void createPanelUI(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash) {
+
+        getContentPane().setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        getContentPane().setLayout(new GridBagLayout());
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -90,19 +133,19 @@ public class GridBagLayoutTest extends JFrame {
         constraints.gridx = 0;
         constraints.gridy = 1;
         constraints.gridwidth = 2; // нулевая ячейка таблицы по горизонтали
-        container.add(changeButton, constraints);
+        getContentPane().add(changeButton, constraints);
 
         deleteButton = new JButton("Delete track");
         constraints.gridx = 0;
         constraints.gridy = 2;
         constraints.gridwidth = 2; // первая ячейка таблицы по горизонтали
-        container.add(deleteButton, constraints);
+        getContentPane().add(deleteButton, constraints);
 
         addButton = new JButton("Add track");
         constraints.gridx = 0;
         constraints.gridy = 3;
         constraints.gridwidth = 2; // вторая ячейка таблицы по горизонтали
-        container.add(addButton, constraints);
+        getContentPane().add(addButton, constraints);
 
         Vector<String> columnNames = new Vector<>();
         columnNames.add("Name");
@@ -111,14 +154,7 @@ public class GridBagLayoutTest extends JFrame {
         columnNames.add("Style");
         columnNames.add("Time");
 
-        Vector<Vector<String>> info = getInfo(gettingHash);
-      /*  info.add(new Vector<String>(List.of(new String[]{"song1", "artist1", "album1", "100"})));
-        info.add(new Vector<String>(List.of(new String[]{"song2", "artist2", "album2", "200"})));
-        info.add(new Vector<String>(List.of(new String[]{"song3", "artist3", "album3", "300"})));
-        info.add(new Vector<String>(List.of(new String[]{"song4", "artist4", "album4", "400"})));
-        info.add(new Vector<String>(List.of(new String[]{"song5", "artist5", "album5", "500"})));
-        info.add(new Vector<String>(List.of(new String[]{"song6", "artist6", "album6", "600"})));*/
-
+        info = getInfo(gettingHash);
 
         table = new JTable(info, columnNames);
         constraints.ipady = 2; // кнопка высокая
@@ -129,7 +165,11 @@ public class GridBagLayoutTest extends JFrame {
 
         //чтобы не было возможности задавать значения таблицы
 
-        container.add(table, constraints);
+        getContentPane().add(table, constraints);
+
+
+        TableModel tableModel = table.getModel();
+        DefaultTableModel defaultTableModel = (DefaultTableModel) tableModel;
 
 
         //изменить трек
@@ -157,11 +197,23 @@ public class GridBagLayoutTest extends JFrame {
                 //функция поиска через row1 для hashMap
                 trackID = uuids[row1];
                 track = new Track(nameOfSongTF.getText(), artistTF.getText(), albumTF.getText(), Long.parseLong(timeTF.getText()), new Style(styleTF.getText()));
-                choose = 1;
-                /*table.setValueAt(nameOfSongTF.getText(), row1, 0);
-                table.setValueAt(artistTF.getText(), row1, 1);
-                table.setValueAt(albumTF.getText(), row1, 2);
-                table.setValueAt(timeTF.getText(), row1, 3);*/
+
+                //info.set(row1, new Vector<String>(List.of(nameOfSongTF.getText(), artistTF.getText(), albumTF.getText(), styleTF.getText(), timeTF.getText())));
+                //choose = 1;
+                String toSend = "1";
+                String trackId = getTrackID();
+                toSend += "@" + trackId + "@" + FileController.TrackToJSON(track);
+                //choose = -1;
+                try {
+                    Connection.send(dataOutputStream, toSend);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                tableModel.setValueAt(nameOfSongTF.getText(), row1, 0);
+                tableModel.setValueAt(artistTF.getText(), row1, 1);
+                tableModel.setValueAt(albumTF.getText(), row1, 2);
+                tableModel.setValueAt(styleTF.getText(), row1, 3);
+                tableModel.setValueAt(timeTF.getText(), row1, 4);
                 f.dispose();
             });
         });
@@ -170,7 +222,14 @@ public class GridBagLayoutTest extends JFrame {
         deleteButton.addActionListener(e -> {
             int row1 = table.getSelectedRows()[0];
             trackID = uuids[row1];
-            choose = 2;
+            String toSend = "2";
+            toSend += "@" + trackID;
+            try {
+                Connection.send(dataOutputStream, toSend);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+           // tableModel.removeRow()
             //отправлять запрос на сервер
             //функция поиска через row1 для hashMap
         });
@@ -200,8 +259,14 @@ public class GridBagLayoutTest extends JFrame {
                 //функция обновления через row1 для hashMap
                 trackID = uuids[row1];
                 track = new Track(nameOfSongTF.getText(), artistTF.getText(), albumTF.getText(), Long.parseLong(timeTF.getText()), new Style(styleTF.getText()));
-                choose = 1;
-                choose = 3;
+                String toSend = "3";
+                toSend += "@" + track.getTrackId().toString() + "@" + FileController.TrackToJSON(track);
+                try {
+                    Connection.send(dataOutputStream, toSend);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                //table.re
                 f.dispose();
             });
         });
@@ -209,14 +274,13 @@ public class GridBagLayoutTest extends JFrame {
 
     public void runView(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash) {
         // Создание окна
-        JFrame frame = new JFrame("Information System!");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Определить панель содержания
-        createPanelUI(frame.getContentPane(), gettingHash);
+        createPanelUI(gettingHash);
 
         // Показать окно
-        frame.pack();
-        frame.setVisible(true);
+        this.pack();
+        this.setVisible(true);
     }
 }
