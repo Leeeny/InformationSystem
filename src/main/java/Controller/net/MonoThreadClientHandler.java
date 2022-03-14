@@ -8,15 +8,15 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.UUID;
 
-public class Server implements Runnable {
+public class MonoThreadClientHandler implements Runnable {
     private static Socket clientDialog;
 
-    public Server(Socket client) {
-        Server.clientDialog = client;
+    public MonoThreadClientHandler(Socket client) {
+        MonoThreadClientHandler.clientDialog = client;
     }
 
     private void parceEntery(String catched, HashMap<UUID, Track> hashMap) throws ParseException {
@@ -64,11 +64,16 @@ public class Server implements Runnable {
         try (DataOutputStream dataOutputStream = new DataOutputStream(clientDialog.getOutputStream());
              DataInputStream dataInputStream = new DataInputStream(clientDialog.getInputStream())) {
             String toCatch;
+            //если файл с хэшем не создан, то создать его
             HashMap<UUID, Track> hashMap = FileController.getHashFromFile("hashMap.txt");
 
             System.out.println("Server initialized");
-
+            Date currDate = new Date();
             while (!clientDialog.isClosed()) {
+                if(new Date().getTime() - currDate.getTime() == 60000) {
+                    hashMap = FileController.getHashFromFile("hashMap.txt");
+                    currDate = new Date();
+                }
                 //отправляем на клиент данные с сервера
                 Connection.send(dataOutputStream, FileController.getStrFromHash(hashMap));
                 System.out.println("Server send hashMap");
