@@ -9,11 +9,12 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Vector;
 
 
 public class GridBagLayoutTest extends JFrame {
@@ -22,12 +23,18 @@ public class GridBagLayoutTest extends JFrame {
     private Track track;
     private Vector<Vector<String>> info;
     private JTable table;
+    private JScrollPane scrollPane;
     private JButton changeButton;
     private JButton deleteButton;
     private JButton addButton;
+    private final DataOutputStream dataOutputStream;
 
     public JTable getTable() {
         return table;
+    }
+
+    public JScrollPane getScrollPane() {
+        return scrollPane;
     }
 
     public JButton getChangeButton() {
@@ -42,20 +49,9 @@ public class GridBagLayoutTest extends JFrame {
         return addButton;
     }
 
-    //HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash;
-    //DataInputStream dataInputStream;
-    DataOutputStream dataOutputStream;
-
-    public GridBagLayoutTest( DataOutputStream dataOutputStream) {
+    public GridBagLayoutTest(DataOutputStream dataOutputStream) {
         super("Information System!");
-        //this.gettingHash = gettingHash;
-        // Создание окна
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // Определить панель содержания
-        //createPanelUI(this.getContentPane(), gettingHash);
-
-        // Показать окно
         this.pack();
         this.setVisible(true);
         this.dataOutputStream = dataOutputStream;
@@ -68,10 +64,6 @@ public class GridBagLayoutTest extends JFrame {
 
     public void setTrackID(String trackID) {
         this.trackID = trackID;
-    }
-
-    public GridBagLayoutTest() throws HeadlessException {
-        //this.choose = -1;
     }
 
     public String[] getUuids() {
@@ -91,7 +83,6 @@ public class GridBagLayoutTest extends JFrame {
     }
 
     public Vector<Vector<String>> getInfo(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash) {
-
         Vector<Vector<String>> info = new Vector<>();
         uuids = gettingHash.keySet().toArray(new String[0]);
         for (String uuid : gettingHash.keySet()) {
@@ -109,38 +100,26 @@ public class GridBagLayoutTest extends JFrame {
         return info;
     }
 
-    public void updatePanelUI() {
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // Определить панель содержания
-        //createPanelUI(this.getContentPane(), gettingHash);
-
-        // Показать окно
-        this.pack();
-        this.setVisible(true);
-    }
     public void createPanelUI(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash) {
 
         getContentPane().setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         getContentPane().setLayout(new GridBagLayout());
 
         GridBagConstraints constraints = new GridBagConstraints();
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 0.5;
-        constraints.gridy = 0;  // нулевая ячейка таблицы по вертикали
-
         changeButton = new JButton("Change track");
         constraints.gridx = 0;
         constraints.gridy = 1;
         constraints.gridwidth = 2; // нулевая ячейка таблицы по горизонтали
         getContentPane().add(changeButton, constraints);
 
+        constraints = new GridBagConstraints();
         deleteButton = new JButton("Delete track");
         constraints.gridx = 0;
         constraints.gridy = 2;
         constraints.gridwidth = 2; // первая ячейка таблицы по горизонтали
         getContentPane().add(deleteButton, constraints);
 
+        constraints = new GridBagConstraints();
         addButton = new JButton("Add track");
         constraints.gridx = 0;
         constraints.gridy = 3;
@@ -153,24 +132,24 @@ public class GridBagLayoutTest extends JFrame {
         columnNames.add("Album");
         columnNames.add("Style");
         columnNames.add("Time");
-
         info = getInfo(gettingHash);
-
         table = new JTable(info, columnNames);
-        constraints.ipady = 2; // кнопка высокая
+        scrollPane = new JScrollPane(table);
+
+        constraints = new GridBagConstraints();
         constraints.weightx = 0.5;
-        constraints.gridwidth = 2; // размер кнопки в две ячейки
-        constraints.gridx = 0; // нулевая ячейка по горизонтали
-        constraints.gridy = 0; // первая ячейка по вертикали
+        constraints.gridwidth = 1;
+        constraints.gridheight = 1;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.weighty = 0.5;
+        constraints.fill = GridBagConstraints.BOTH;
 
-        //чтобы не было возможности задавать значения таблицы
 
-        getContentPane().add(table, constraints);
-
+        getContentPane().add(scrollPane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
         TableModel tableModel = table.getModel();
         DefaultTableModel defaultTableModel = (DefaultTableModel) tableModel;
-
 
         //изменить трек
         changeButton.addActionListener(e -> {
@@ -182,14 +161,12 @@ public class GridBagLayoutTest extends JFrame {
             JTextField albumTF = new JTextField((String) table.getValueAt(row1, 2), 10);
             JTextField styleTF = new JTextField((String) table.getValueAt(row1, 3), 10);
             JTextField timeTF = new JTextField((String) table.getValueAt(row1, 4), 10);
-            //добавить имя стиля!
             JButton submitButton = new JButton("Submit");
             f.getContentPane().add(nameOfSongTF);
             f.getContentPane().add(artistTF);
             f.getContentPane().add(albumTF);
             f.getContentPane().add(styleTF);
             f.getContentPane().add(timeTF);
-
             f.getContentPane().add(submitButton);
             f.pack();
             f.setVisible(true);
@@ -197,9 +174,6 @@ public class GridBagLayoutTest extends JFrame {
                 //функция поиска через row1 для hashMap
                 trackID = uuids[row1];
                 track = new Track(nameOfSongTF.getText(), artistTF.getText(), albumTF.getText(), Long.parseLong(timeTF.getText()), new Style(styleTF.getText()));
-
-                //info.set(row1, new Vector<String>(List.of(nameOfSongTF.getText(), artistTF.getText(), albumTF.getText(), styleTF.getText(), timeTF.getText())));
-                //choose = 1;
                 String toSend = "1";
                 String trackId = getTrackID();
                 toSend += "@" + trackId + "@" + FileController.TrackToJSON(track);
@@ -229,9 +203,6 @@ public class GridBagLayoutTest extends JFrame {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-           // tableModel.removeRow()
-            //отправлять запрос на сервер
-            //функция поиска через row1 для hashMap
         });
 
         //добавить новый
@@ -250,13 +221,10 @@ public class GridBagLayoutTest extends JFrame {
             f.getContentPane().add(albumTF);
             f.getContentPane().add(styleTF);
             f.getContentPane().add(timeTF);
-
             f.getContentPane().add(submitButton);
             f.pack();
             f.setVisible(true);
             submitButton.addActionListener(y -> {
-                //отправляем запрос на сервер
-                //функция обновления через row1 для hashMap
                 trackID = uuids[row1];
                 track = new Track(nameOfSongTF.getText(), artistTF.getText(), albumTF.getText(), Long.parseLong(timeTF.getText()), new Style(styleTF.getText()));
                 String toSend = "3";
@@ -266,20 +234,16 @@ public class GridBagLayoutTest extends JFrame {
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-                //table.re
                 f.dispose();
             });
         });
     }
 
+
+    //удалить
     public void runView(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash) {
-        // Создание окна
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // Определить панель содержания
         createPanelUI(gettingHash);
-
-        // Показать окно
         this.pack();
         this.setVisible(true);
     }

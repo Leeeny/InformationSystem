@@ -70,10 +70,11 @@ public class MonoThreadClientHandler implements Runnable {
             System.out.println("Server initialized");
             Date currDate = new Date();
             while (!clientDialog.isClosed()) {
-                if(new Date().getTime() - currDate.getTime() == 60000) {
+                /*if(new Date().getTime() - currDate.getTime() == 60000) {
                     hashMap = FileController.getHashFromFile("hashMap.txt");
                     currDate = new Date();
-                }
+                }*/
+                hashMap = FileController.getHashFromFile("hashMap.txt");
                 //отправляем на клиент данные с сервера
                 Connection.send(dataOutputStream, FileController.getStrFromHash(hashMap));
                 System.out.println("Server send hashMap");
