@@ -27,6 +27,7 @@ public class GridBagLayoutTest extends JFrame {
     private JButton changeButton;
     private JButton deleteButton;
     private JButton addButton;
+    private JButton updateButton;
     private final DataOutputStream dataOutputStream;
 
     public JTable getTable() {
@@ -49,6 +50,9 @@ public class GridBagLayoutTest extends JFrame {
         return addButton;
     }
 
+    public JButton getUpdateButton() {
+        return updateButton;
+    }
     public GridBagLayoutTest(DataOutputStream dataOutputStream) {
         super("Information System!");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -108,23 +112,30 @@ public class GridBagLayoutTest extends JFrame {
         GridBagConstraints constraints = new GridBagConstraints();
         changeButton = new JButton("Change track");
         constraints.gridx = 0;
-        constraints.gridy = 1;
-        constraints.gridwidth = 2; // нулевая ячейка таблицы по горизонтали
+        constraints.gridy = 2;
+        constraints.gridwidth = 10; // нулевая ячейка таблицы по горизонтали
         getContentPane().add(changeButton, constraints);
 
         constraints = new GridBagConstraints();
-        deleteButton = new JButton("Delete track");
+        deleteButton = new JButton(" Delete track ");
         constraints.gridx = 0;
-        constraints.gridy = 2;
+        constraints.gridy = 3;
         constraints.gridwidth = 2; // первая ячейка таблицы по горизонтали
         getContentPane().add(deleteButton, constraints);
 
         constraints = new GridBagConstraints();
-        addButton = new JButton("Add track");
+        addButton = new JButton("    Add track   ");
         constraints.gridx = 0;
-        constraints.gridy = 3;
+        constraints.gridy = 4;
         constraints.gridwidth = 2; // вторая ячейка таблицы по горизонтали
         getContentPane().add(addButton, constraints);
+
+        constraints = new GridBagConstraints();
+        updateButton = new JButton("      Update     ");
+        constraints.gridx = 0;
+        constraints.gridy = 5;
+        constraints.gridwidth = 1; // вторая ячейка таблицы по горизонтали
+        getContentPane().add(updateButton, constraints);
 
         Vector<String> columnNames = new Vector<>();
         columnNames.add("Name");
@@ -137,13 +148,13 @@ public class GridBagLayoutTest extends JFrame {
         scrollPane = new JScrollPane(table);
 
         constraints = new GridBagConstraints();
-        constraints.weightx = 0.5;
-        constraints.gridwidth = 1;
-        constraints.gridheight = 1;
+        //constraints.weightx = 2;
+        //constraints.gridwidth = 1;
+        //constraints.gridheight = 2;
         constraints.gridx = 0;
         constraints.gridy = 0;
-        constraints.weighty = 0.5;
-        constraints.fill = GridBagConstraints.BOTH;
+        //constraints.weighty = 1;
+        //constraints.fill = GridBagConstraints.BOTH;
 
 
         getContentPane().add(scrollPane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
@@ -246,5 +257,9 @@ public class GridBagLayoutTest extends JFrame {
         createPanelUI(gettingHash);
         this.pack();
         this.setVisible(true);
+    }
+
+    public void setUpdateButton(JButton updateButton) {
+        this.updateButton = updateButton;
     }
 }
