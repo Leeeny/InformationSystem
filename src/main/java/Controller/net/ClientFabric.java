@@ -5,7 +5,7 @@ import java.util.concurrent.Executors;
 
 public class ClientFabric {
     public static void main(String[] args) throws InterruptedException {
-        ExecutorService exec = Executors.newCachedThreadPool();
+        ExecutorService exec = Executors.newFixedThreadPool(3);
        for (int i = 0; i < 3; i++) {
             exec.execute(new Client());
             Thread.sleep(10);

@@ -53,6 +53,7 @@ public class Client implements Runnable {
                     jFrame.remove(jFrame.getAddButton());
                     jFrame.remove(jFrame.getDeleteButton());
                     jFrame.remove(jFrame.getChangeButton());
+                    jFrame.remove(jFrame.getUpdateButton());
                 }
                 jFrame.createPanelUI(hashMap);
                 jFrame.pack();
