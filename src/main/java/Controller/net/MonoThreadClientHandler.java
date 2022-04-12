@@ -2,6 +2,7 @@ package Controller.net;
 
 import Controller.FileController;
 import Model.Track;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.json.simple.parser.ParseException;
 
 import java.io.DataInputStream;
@@ -20,7 +21,7 @@ public class MonoThreadClientHandler implements Runnable {
         MonoThreadClientHandler.clientDialog = client;
     }
 
-    private void parceEntery(String catched, HashMap<UUID, Track> hashMap) throws ParseException {
+    private void parceEntery(String catched, HashMap<UUID, Track> hashMap, DataOutputStream dataOutputStream) throws ParseException, IOException {
         String[] splited = catched.split("@");
         int choose = Integer.parseInt(splited[0]);
         switch (choose) {
@@ -52,12 +53,17 @@ public class MonoThreadClientHandler implements Runnable {
                 Track newTrack = FileController.trackFromString(strTrack);
                 hashMap.put(newTrack.getTrackId(), newTrack);
             }
-            //quit
+            //update
             case 4 -> {
-
+                hashMap = FileController.getHashFromFile("hashMap.txt");
+                Connection.send(dataOutputStream,  FileController.getStrFromHash(hashMap));
             }
-
+            //close
+            case 5 -> {
+                Connection.send(dataOutputStream, "close");
+            }
         }
+        FileController.hashToFile(hashMap, "hashMap.txt");
     }
 
     @Override
@@ -69,12 +75,7 @@ public class MonoThreadClientHandler implements Runnable {
             HashMap<UUID, Track> hashMap = FileController.getHashFromFile("hashMap.txt");
 
             System.out.println("Server initialized");
-            Date currDate = new Date();
             while (!clientDialog.isClosed()) {
-                /*if(new Date().getTime() - currDate.getTime() == 60000) {
-                    hashMap = FileController.getHashFromFile("hashMap.txt");
-                    currDate = new Date();
-                }*/
                 hashMap = FileController.getHashFromFile("hashMap.txt");
                 //отправляем на клиент данные с сервера
                 Connection.send(dataOutputStream, FileController.getStrFromHash(hashMap));
@@ -85,9 +86,9 @@ public class MonoThreadClientHandler implements Runnable {
                 System.out.println(toCatch);
 
                 //парсим и меняем hashMap
-                parceEntery(toCatch, hashMap);
+                parceEntery(toCatch, hashMap, dataOutputStream);
+                hashMap = FileController.getHashFromFile("hashMap.txt");
                 System.out.println(hashMap);
-                FileController.hashToFile(hashMap, "hashMap.txt");
             }
             System.out.println("Client disconnected");
             System.out.println("Closing connections & channels.");

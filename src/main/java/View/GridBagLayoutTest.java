@@ -1,16 +1,22 @@
 package View;
 
 import Controller.FileController;
+import Controller.net.Client;
 import Controller.net.Connection;
 import Model.Style;
 import Model.Track;
+import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,6 +35,9 @@ public class GridBagLayoutTest extends JFrame {
     private JButton addButton;
     private JButton updateButton;
     private final DataOutputStream dataOutputStream;
+    private final DataInputStream dataInputStream;
+    private Socket socket;
+    private boolean flag;
 
     public JTable getTable() {
         return table;
@@ -53,13 +62,19 @@ public class GridBagLayoutTest extends JFrame {
     public JButton getUpdateButton() {
         return updateButton;
     }
-    public GridBagLayoutTest(DataOutputStream dataOutputStream) {
+    public GridBagLayoutTest(DataOutputStream dataOutputStream, DataInputStream dataInputStream, Socket socket, boolean flag) {
         super("Information System!");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.pack();
         this.setVisible(true);
         this.dataOutputStream = dataOutputStream;
+        this.dataInputStream = dataInputStream;
+        this.socket = socket;
+        this.flag = flag;
+    }
 
+    public boolean getFlag() {
+        return flag;
     }
 
     public String getTrackID() {
@@ -157,7 +172,8 @@ public class GridBagLayoutTest extends JFrame {
         //constraints.fill = GridBagConstraints.BOTH;
 
 
-        getContentPane().add(scrollPane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+        getContentPane().add(scrollPane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0,
+                GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
         TableModel tableModel = table.getModel();
         DefaultTableModel defaultTableModel = (DefaultTableModel) tableModel;
@@ -248,8 +264,61 @@ public class GridBagLayoutTest extends JFrame {
                 f.dispose();
             });
         });
+        //обновить
+        updateButton.addActionListener(e -> {
+            String toSend = "4";
+            try {
+                Connection.send(dataOutputStream, toSend);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            //тут надо удалить части таблицы, а затем обновить ее
+            String hashStr;
+            try {
+                hashStr = Connection.recv(dataInputStream);
+                HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> tempHash = FileController.getHashFromString(hashStr);
+                update();
+                info = getInfo(tempHash);
+                createPanelUI(tempHash);
+                pack();
+                setVisible(true);
+
+            } catch (IOException | ParseException ex) {
+                ex.printStackTrace();
+            }
+
+        });
+
+        //закрыть окно
+        this.addWindowListener( new WindowAdapter()
+        {
+            public void windowClosing(WindowEvent e)
+            {
+                try {
+                    flag = false;
+                    String toSend = "5";
+                    Connection.send(dataOutputStream, toSend);
+                    dataOutputStream.close();
+                    dataInputStream.close();
+                    Client.closeConnection(socket);
+                    dispose();
+                    setVisible(false);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+        });
     }
 
+    public void update(){
+        remove(getTable());
+        remove(getScrollPane());
+        remove(getAddButton());
+        remove(getDeleteButton());
+        remove(getChangeButton());
+        remove(getUpdateButton());
+    }
 
     //удалить
     public void runView(HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> gettingHash) {

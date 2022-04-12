@@ -4,24 +4,39 @@ import Controller.FileController;
 import View.GridBagLayoutTest;
 import org.json.simple.parser.ParseException;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 
-public class Client implements Runnable {
+import static java.lang.System.in;
+import static java.lang.System.out;
+
+public class Client extends Thread {
     static Socket socket;
 
     public Client() {
         try {
             socket = new Socket("localhost", 3345);
-            System.out.println("Client connected to socket");
+            out.println("Client connected to socket");
             Thread.sleep(2000);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void closeConnection(Socket socket) throws IOException {
+        try {
+            out.close();
+        }
+        finally {
+            try {
+                in.close();
+            }
+            finally {
+                socket.close();
+            }
         }
     }
 
@@ -29,38 +44,32 @@ public class Client implements Runnable {
     public void run() {
         try (DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
              DataInputStream dataInputStream = new DataInputStream(socket.getInputStream())) {
-            GridBagLayoutTest jFrame = new GridBagLayoutTest(dataOutputStream);
+            boolean flag = true;
+            GridBagLayoutTest jFrame = new GridBagLayoutTest(dataOutputStream, dataInputStream, socket, flag);
             int i = 0;
-            while (true) {
-                Scanner in = new Scanner(System.in);
+            while (jFrame.getFlag()) {
                 String gettingHash;
                 HashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>> hashMap;
-                System.out.println("Client initialized");
+                out.println("Client initialized");
+
                 //ловим hash с сервера
                 gettingHash = Connection.recv(dataInputStream);
-
-                System.out.println("1 for client thread " + Thread.currentThread().getId());
+                out.println("1 for client thread " + Thread.currentThread().getId());
                 //тут отображаем во вью то, что пришло
-                System.out.println("++++++++++Info from Server+++++++++");
-                System.out.println(gettingHash);
+                out.println("++++++++++Info from Server+++++++++");
+                out.println(gettingHash);
                 hashMap = FileController.getHashFromString(gettingHash);
 
-                //вынести данную логику на уровень вью!
                 //чекаем, что компоненты вью уже инициализированы
                 if (i > 0) {
-                    jFrame.remove(jFrame.getTable());
-                    jFrame.remove(jFrame.getScrollPane());
-                    jFrame.remove(jFrame.getAddButton());
-                    jFrame.remove(jFrame.getDeleteButton());
-                    jFrame.remove(jFrame.getChangeButton());
-                    jFrame.remove(jFrame.getUpdateButton());
+                    jFrame.update();
                 }
                 jFrame.createPanelUI(hashMap);
                 jFrame.pack();
                 jFrame.setVisible(true);
-                System.out.println("2");
+                out.println("2");
                 //это я проверяю, что все изменилось, это не надо во вью
-                System.out.println(hashMap);
+                out.println(hashMap);
                 i++;
             }
         } catch (IOException | ParseException e) {
